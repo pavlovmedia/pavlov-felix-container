@@ -83,6 +83,7 @@ RUN mkdir -p /opt/felix/current/configs
 # https://github.com/jwilder/nginx-proxy
 #
 
+EXPOSE 1813
 EXPOSE 8080
 EXPOSE 8000
 EXPOSE 9000
