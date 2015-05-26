@@ -93,7 +93,7 @@ EXPOSE 9000
 #
 
 COPY files/startFelix.sh /opt/felix/current/
-COPY files/config.properties /opt/felix/current/conf/
+COPY files/felix/conf/config.properties /opt/felix/current/conf/
 
 #
 # Execute startup script
