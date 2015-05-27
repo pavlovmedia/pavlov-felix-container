@@ -30,7 +30,7 @@ RUN apt-get install -y oracle-java8-installer
 # Now get felix set up
 #
 
-ADD http://apache.mirrors.pair.com/felix/org.apache.felix.main.distribution-4.6.0.tar.gz /tmp/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.main.distribution-4.6.0.tar.gz /tmp/
 RUN mkdir -p /opt/felix && cd /opt/felix && tar xzvf /tmp/org.apache.felix.main.distribution-4.6.0.tar.gz
 RUN ln -s /opt/felix/felix-framework-4.6.0 /opt/felix/current
 
@@ -39,20 +39,20 @@ RUN ln -s /opt/felix/felix-framework-4.6.0 /opt/felix/current
 #
 
 ## Pull directly from Apach if possbile
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.configadmin-1.8.0.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.eventadmin-1.4.2.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.fileinstall-3.4.0.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.http.api-2.3.2.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.http.jetty-3.0.0.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.http.servlet-api-1.1.0.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.http.whiteboard-2.3.2.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.metatype-1.0.10.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.log-1.0.1.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.configadmin-1.8.0.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.eventadmin-1.4.2.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.fileinstall-3.4.0.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.http.api-2.3.2.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.http.jetty-3.0.0.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.http.servlet-api-1.1.0.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.http.whiteboard-2.3.2.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.metatype-1.0.10.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.log-1.0.1.jar /opt/felix/current/bundle/
 ## SCR was newer in mavne oddly.
 ADD http://repo1.maven.org/maven2/org/apache/felix/org.apache.felix.scr/1.8.2/org.apache.felix.scr-1.8.2.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.webconsole-4.2.6-all.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.webconsole.plugins.ds-1.0.0.jar /opt/felix/current/bundle/
-ADD http://mirrors.ibiblio.org/apache/felix/org.apache.felix.webconsole.plugins.event-1.1.2.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.webconsole-4.2.6-all.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.webconsole.plugins.ds-1.0.0.jar /opt/felix/current/bundle/
+ADD http://archive.apache.org/dist/felix/org.apache.felix.webconsole.plugins.event-1.1.2.jar /opt/felix/current/bundle/
 
 #
 # This section is more specifically for getting JAX-RS running
@@ -83,11 +83,20 @@ RUN mkdir -p /opt/felix/current/configs
 # https://github.com/jwilder/nginx-proxy
 #
 
+EXPOSE 1813
 EXPOSE 8080
+EXPOSE 8000
+EXPOSE 9000
 
 #
-# Copy our startup script
+# Copy our startup script & config stuff
 #
 
 COPY files/startFelix.sh /opt/felix/current/
+COPY files/felix/conf/config.properties /opt/felix/current/conf/
+
+#
+# Execute startup script
+#
+
 CMD /opt/felix/current/startFelix.sh
