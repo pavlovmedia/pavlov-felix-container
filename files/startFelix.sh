@@ -20,7 +20,7 @@ case $RUNTYPE in
   DEV)
 
    # Debugging
-   JVM_OPTIONS="$JVM_OPTIONS -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+   JVM_OPTIONS="$JVM_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000"
    # JMX
    JVM_OPTIONS="$JVM_OPTIONS -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9000 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
 
