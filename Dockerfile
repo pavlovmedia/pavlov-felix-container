@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER Shawn Dempsay <sdempsay@pavlovmedia.com>
 
 ##
@@ -21,10 +21,12 @@ ENV DEBIAN_FRONTEND noninteractive
 ##
 # Set up Open JDK8
 #
-RUN apt-get update && apt-get install -y openjdk-8-jre-headless openjdk-8-jdk-headless wget
+# RUN apt-get update && apt-get install -y openjdk-8-jre-headless openjdk-8-jdk-headless wget
+# RUN apt-get update && apt-get install -y default-jdk wget
+RUN apt-get update && apt-get install -y openjdk-11-jre-headless openjdk-11-jdk-headless wget nano
 
 # Install Felix
-ENV felix_version 6.0.0
+ENV felix_version 6.0.3
 ENV felix_package=org.apache.felix.main.distribution-${felix_version}.tar.gz
 ENV felix_base http://repo1.maven.org/maven2/org/apache/felix
 
@@ -38,9 +40,11 @@ RUN mkdir -p /opt/felix && \
 
 # We set up configuration here so that our obr installs go nicely
 ADD files/config.properties /opt/felix/current/conf/
+ADD files/system.properties /opt/felix/current/conf/
+ADD files/logging.properties /opt/felix/current/conf/
 
 #
-# Now expose where config manager dumps thigs so we can persist
+# Now expose where config manager dumps things so we can persist
 # across starts
 #
 RUN mkdir -p /opt/felix/current/configs
@@ -51,9 +55,19 @@ RUN mkdir -p /opt/felix/current/configs
 ADD files/install.gogo /tmp
 ADD files/felix.repository /tmp/felix/repository.xml
 ADD files/jaxrs.repository /tmp/jaxrs/repository.xml
+ADD files/swagger.repository /tmp/swagger/repository.xml
 ADD files/slf4j.repository /tmp/slf4j/repository.xml
-ADD https://raw.githubusercontent.com/pavlovmedia/osgi-jaxrs-services/master/obr/repository.xml /tmp/pavlovjax/repository.xml
+# ADD https://raw.githubusercontent.com/pavlovmedia/osgi-jaxrs-services/master/obr/repository.xml /tmp/pavlovjax/repository.xml
+ADD files/pavlovjax/ /tmp/pavlovjax/
+ADD files/reflections/ /tmp/reflections/
 ADD files/com.pavlovmedia.oss.osgi.gogo-1.0.2.jar /opt/felix/current/bundle
+
+#
+# TEMPORARY - STORE REPOS FOR SCR AND TESTING
+#
+RUN mkdir -p /opt/felix/current/repos
+ADD files/jaxrs.repository /opt/felix/current/repos/jaxrs/repository.xml
+ADD files/felixbundlerepository/ /opt/felix/current/repos/felixbundlerepository/
 
 #
 # Install bundles with OBR
@@ -69,6 +83,7 @@ EXPOSE 8080 8000
 VOLUME ["/opt/felix/current/configs", "/opt/felix/current/load" ]
 
 # You can override these at runtime, and you are encouraged to turn off debugger support in production
-ENV JVM_OPTIONS="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+#ENV JVM_OPTIONS="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+ENV JVM_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=*:8000,server=y,suspend=n"
 
 CMD exec java $JVM_OPTIONS -jar bin/felix.jar
